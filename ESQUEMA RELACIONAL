@@ -1,0 +1,40 @@
+--ESQUEMA RELACIONAL
+-- Tabela "Mãe"
+CREATE TABLE Pessoa (
+    id_pessoa SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    rua VARCHAR(100),
+    cidade VARCHAR(50),
+    cep VARCHAR(10)
+);
+
+-- Tabela para atributo multivalorado (1 Pessoa tem N Telefones)
+CREATE TABLE Telefone (
+    id_telefone SERIAL PRIMARY KEY,
+    id_pessoa INT REFERENCES Pessoa(id_pessoa) ON DELETE CASCADE,
+    numero VARCHAR(15)
+);
+
+-- Tabela "Filha" (Relação 1:1 com Pessoa)
+CREATE TABLE Professor (
+    id_pessoa INT PRIMARY KEY REFERENCES Pessoa(id_pessoa) ON DELETE CASCADE,
+    salario DECIMAL(10, 2),
+    titulacao VARCHAR(20) CHECK (titulacao IN ('ESPECIALISTA', 'MESTRE', 'DOUTOR'))
+);
+
+-- Tabela "Filha" (Relação 1:1 com Pessoa)
+CREATE TABLE Aluno (
+    id_pessoa INT PRIMARY KEY REFERENCES Pessoa(id_pessoa) ON DELETE CASCADE,
+    matricula VARCHAR(20) UNIQUE NOT NULL
+);
+
+-- Adicionar valores
+insert into Pessoa (id_pessoa, nome, rua, cidade, cep) values (1, 'Alan', 'Rua Tiradentes', 'Ibiruba', '9200'),
+(2, 'Carlos Souza', 'Rua General Osorio', 'Ibiruba', '9200'),
+(3, 'Edimar', 'Av Brasil ', 'Ibiruba', '9200'),
+(4, 'Fernando', 'Rua General Osorio', 'Ibiruba', '9200'),
+(5, 'Gubert', 'Rua General Osorio', 'Ibiruba', '9200');
+
+insert into Telefone (id_pessoa, numero) values (1,'54999529045');
+insert into Professor (id_pessoa, salario, titulacao) values (3, 15000.00, 'MESTRE');
+insert into Aluno (id_pessoa, matricula) values (1, '2023'), (4, '2022');
