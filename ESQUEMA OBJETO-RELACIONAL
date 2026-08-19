@@ -1,0 +1,53 @@
+-- ESQUEMA OBJETO-RELACIONAL
+-- 1. ENUM: Definindo um domínio restrito de valores para a titulação
+CREATE TYPE Titulacao_Enum AS ENUM ('ESPECIALISTA', 'MESTRE', 'DOUTOR');
+
+-- 2. TIPO COMPOSTO: Encapsulando os dados de endereço
+CREATE TYPE Endereco_Tipo AS (
+    rua VARCHAR(100),
+    cidade VARCHAR(50),
+    cep VARCHAR(10)
+);
+
+-- Tabela Base ("Superclasse") utilizando o Tipo Composto e Array
+CREATE TABLE Pessoa (
+    id_pessoa SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    endereco Endereco_Tipo,
+    telefones VARCHAR(15)[]
+);
+
+-- 4. HERANÇA: Professor herda de Pessoa
+CREATE TABLE Professor (
+    salario DECIMAL(10, 2),
+    titulacao Titulacao_Enum
+) INHERITS (Pessoa);
+
+-- 4. HERANÇA: Aluno herda de Pessoa
+CREATE TABLE Aluno (
+    matricula VARCHAR(20) UNIQUE NOT NULL
+) INHERITS (Pessoa);
+
+-- Insirir valores
+INSERT INTO Aluno (nome, endereco, telefones, matricula) 
+VALUES (
+    'Alan', 
+    ROW('Rua Tiradentes', 'Ibiruba', '9200')::Endereco_Tipo, 
+    ARRAY['54999529045'],
+    '2023'
+);
+
+INSERT INTO Aluno (nome, endereco, matricula) 
+VALUES (
+    'Fernando', 
+    ROW('Rua General Osorio', 'Ibiruba', '9200')::Endereco_Tipo, 
+    '2022'
+);
+
+INSERT INTO Professor (nome, endereco, salario, titulacao) 
+VALUES (
+    'Edimar', 
+    ROW('Av Brasil', 'Ibiruba', '9200')::Endereco_Tipo, 
+    15000.00, 
+    'MESTRE'
+);
